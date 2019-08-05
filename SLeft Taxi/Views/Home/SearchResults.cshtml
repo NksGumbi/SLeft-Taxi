@@ -1,0 +1,86 @@
+﻿@model IEnumerable<SLeft_Taxi.Models.Schedule>
+
+@{
+    ViewBag.Title = "SearchResults";
+}
+
+<h2>SearchResults</h2>
+<br />
+@ViewBag.ScheduleMessage
+<br />
+<h4>Source : @ViewBag.Source | Destination: @ViewBag.Destination </h4><br />
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Taxi.taxiName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.scheduleDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.depatureTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.arrivalDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.arrivalTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.status)
+        </th>
+        <th>
+             Available Seats | Cost
+        </th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Taxi.taxiName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.scheduleDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.depatureTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.arrivalDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.arrivalTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.status)
+            </td>
+            <td>
+                @if (!item.scheduleDate.ToShortDateString().Contains(DateTime.Today.ToShortDateString()))
+                {
+                    if (item.AvailSeats > 0)
+                    {
+                        using (Html.BeginForm("Book", "Reservations", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("sid", item.scheduleId)
+                            @Html.Hidden("tid", item.taxiId)
+                            @Html.Hidden("doj", item.scheduleDate)
+                            @Html.Hidden("name", item.Taxi.taxiName)
+                            <input type="submit" value="Book" class="btn" />
+                        }
+
+                    }
+                }
+                else
+                {
+                    <div>cannot book!!</div>
+                }
+            </td>
+            @*<td>
+                @Html.ActionLink("Book", "Book", "Reservations", new { sid = item.scheduleId, tid = item.taxiId, doj = item.scheduleDate, name = item.Taxi.taxiName }, null) }
+                </td>*@
+        </tr>
+    }
+</table>
+
